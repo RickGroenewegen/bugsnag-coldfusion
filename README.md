@@ -1,4 +1,4 @@
-Pusher
+bugsnag-coldfusion
 ======
 
 A Coldfusion notifier for [BugSnag](https://bugsnag.com)
