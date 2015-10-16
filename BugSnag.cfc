@@ -2,8 +2,7 @@
 
 	<cfset variables.version = "0.1"/>
 	<cfset variables.APIKey = ""/>
-	<cfset variables.isRailo = findNoCase("railo",server.coldfusion.productName)/>
-
+	
 	<cffunction name="init" returntype="any">
 	
 		<cfargument name="APIKey" type="string" required="true"/>
@@ -18,6 +17,14 @@
 
 	</cffunction>
 
+	<cffunction name="setAPIKey" returntype="void">
+	
+		<cfargument name="APIKey" type="string" required="true"/>
+		
+		<cfset variables.apiKey = arguments.APIKey/>
+
+	</cffunction>
+
 	<cffunction name="notifyError" returntype="void">
 		
 		<cfargument name="exception" type="any" required="true"/>
@@ -29,15 +36,14 @@
 		
 		<cfset var payload = ""/>
 		<cfset var tagContext = structNew()/>
-		<cfset var isRailo = findNoCase("railo",server.coldfusion.productName)/>
 		<cfset var protocol = "https"/>
 
 		<cfif variables.autoNotify AND listFindNoCase(variables.notifyReleaseStages,variables.releaseStage)>
-				
-			<cfif isRailo>
-				<cfset tagContext = exception.cause.tagContext/>
-			<cfelse>
+	
+			<cfif structKeyExists(exception,"tagContext")>
 				<cfset tagContext = exception.tagContext/>
+			<cfelseif  structKeyExists(exception.cause,"tagContext")>
+				<cfset tagContext = exception.cause.tagContext/>
 			</cfif>
 
 			<cfsavecontent variable="payload">
@@ -109,6 +115,9 @@
 				</cfoutput>
 			</cfsavecontent>
 
+			<cfset payload = stripWhiteSpace(payload)/>
+			<cfset payload = replace(payload,"\'","'","all")/>
+
 			<cfif NOT variables.useSSL>
 				<cfset protocol = "http"/>
 			</cfif>
@@ -117,6 +126,7 @@
 				<cfhttpparam type="header" name="Content-Type" value="application/json"/>
 				<cfhttpparam type="body" name="field" value="#payload#"/>
 			</cfhttp>
+
 		</cfif>
 
 	</cffunction>
@@ -206,6 +216,24 @@
 		</cfloop>
 		
 		<cfset returnString = serializeJSON(sScope)/>
+
+		<cfreturn returnString/>
+
+	</cffunction>
+
+	<cffunction name="stripWhiteSpace" returnType="string" output="false">
+
+		<cfargument name="theString" required="true" type="string">
+		<cfargument name="andTabs" required="false" type="boolean" default="false">
+
+		<cfset var returnString = ""/>
+
+		<cfif arguments.andTabs>
+			<cfset returnString = replace(replace(replace(arguments.theString,"#chr(10)#","","all"),"#chr(13)#","","all"),"#chr(9)#","","all")/>
+		<cfelse>
+			<cfset returnString = REReplace(arguments.theString, "[[:space:]]{2,}"," ","ALL")>
+
+		</cfif>
 
 		<cfreturn returnString/>
 
