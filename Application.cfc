@@ -1,9 +1,11 @@
 <cfcomponent>
 	
 	<cfset this.name = "BugSnagTest"/>
-	
+	<cfset this.sessionManagement = true/>
+	<cfset this.clientManagement = true/>
+
 	<cfset this.bugSnag = createObject("component","BugSnag").init(
-		APIKey = "970b5f88cd1fd616a832cf0b497006ab", <!--- Your API key here --->
+		APIKey = "xxxxxxxxxxxx", <!--- Your API key here --->
 		releaseStage = "development",
 		notifyReleaseStages = "development",
 		autoNotify = true,
@@ -17,6 +19,10 @@
 	    <cfset var app = structNew()/>
 		<cfset var user = structNew()/>
 		<cfset var metadata = structNew()/>
+
+		<!--- Set test values in client & session scopes --->
+		<cfset session.testValue = 123/>
+		<cfset client.testValue = 456/>
 
 		<!--- Create app data --->
 		<cfset app["appData1"] = "One"/>

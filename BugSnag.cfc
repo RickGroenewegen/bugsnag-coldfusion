@@ -37,6 +37,21 @@
 		<cfset var payload = ""/>
 		<cfset var tagContext = structNew()/>
 		<cfset var protocol = "https"/>
+		<cfset var applicationSettings = structNew()/>
+		<cfset var appScopeEnabled = false/>
+		<cfset var sessionScopeEnabled = false/>
+		<cfset var clientScopeEnabled = false/>
+
+		<!--- Test if there is an application scope --->
+		<cftry>
+			<cfset applicationSettings = application.getApplicationSettings()/>
+			<cfset appScopeEnabled = true/>
+			<cfset sessionScopeEnabled = applicationSettings.sessionManagement/>
+			<cfset clientScopeEnabled = applicationSettings.clientManagement/>
+			<cfcatch><
+				<!--- Nothing, no app scope --->
+			</cfcatch>
+		</cftry>
 
 		<cfif variables.autoNotify AND listFindNoCase(variables.notifyReleaseStages,variables.releaseStage)>
 	
@@ -104,8 +119,9 @@
 									"form" : #serializeScope(scope = form)#,   
 									"url" : #serializeScope(scope = url)#,   
 									"request" : #serializeScope(scope = request)#,   
-									"session" : #serializeScope(scope = session)#,   
-									"client" : #serializeScope(scope = client)#,   			             
+									<cfif appScopeEnabled>"application" : #serializeScope(scope = application)#,</cfif>
+									<cfif sessionScopeEnabled>"session" : #serializeScope(scope = session)#,</cfif>
+									<cfif clientScopeEnabled>"client" : #serializeScope(scope = client)#,</cfif>   			             
 									"CGI" : #serializeScope(scope = cgi)#,
 									"cookie" : #serializeScope(scope = cookie)#
 								}
