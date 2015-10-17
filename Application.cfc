@@ -16,7 +16,7 @@
 
 		<cfargument name="exception" type="any" required="true"/>
 	    
-	    <cfset var app = structNew()/>
+		<cfset var app = structNew()/>
 		<cfset var user = structNew()/>
 		<cfset var metadata = structNew()/>
 

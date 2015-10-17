@@ -48,7 +48,7 @@
 			<cfset appScopeEnabled = true/>
 			<cfset sessionScopeEnabled = applicationSettings.sessionManagement/>
 			<cfset clientScopeEnabled = applicationSettings.clientManagement/>
-			<cfcatch><
+			<cfcatch>
 				<!--- Nothing, no app scope --->
 			</cfcatch>
 		</cftry>
